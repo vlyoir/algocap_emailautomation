@@ -89,12 +89,12 @@ def compose_email(template, name, data_dict):
   """
   composed = template.substitute(
     PERSON_NAME=name,
-    START_DATE=data_dict[start_date],
-    END_DATE=data_dict[end_date],
-    TOTAL_SPENT="{:,}".format(data_dict[total_spent]),
-    TOTAL_CONVERSION="{:,}".format(data_dict[total_conversion]),
+    START_DATE=data_dict['start_date'],
+    END_DATE=data_dict['end_date'],
+    TOTAL_SPENT="{:,}".format(data_dict['total_spent']),
+    TOTAL_CONVERSION="{:,}".format(data_dict['total_conversion']),
     CPC=unroll_sentence(data_dict['cpc']),
-    GITHUB_LINK='https://github.com/tiaradwiputri/fire-capstone'
+    GITHUB_LINK='https://https://github.com/vlyoir/algocap_emailautomation'
   )
   return composed
 
@@ -126,7 +126,7 @@ def create_plot(file_path="data_input/data.csv", id=['936', '1178']):
 
   # Create a grouped dataframe based on campaign id, age group, and reporting date
   # Calculate the total converision of each group
-  grouped = campaigns.groupby(by=['___', '___', '___'], as_index=False)['___'].___
+  grouped = campaigns.groupby(by=['campaign_id', 'age', 'reporting_start'], as_index=False)['total_conversion'].sum()
 
   fig = plt.figure(1, figsize=(15,6))
 
@@ -134,9 +134,9 @@ def create_plot(file_path="data_input/data.csv", id=['936', '1178']):
   for i, campaign in enumerate(grouped.campaign_id.unique()):
     plt.subplot(1, len(id), i+1)
     
-    df = grouped[grouped[___] == campaign].loc[:,['age', 'reporting_start', 'total_conversion']]
+    df = grouped[grouped['campaign_id'] == campaign].loc[:,['age', 'reporting_start', 'total_conversion']]
     df['reporting_start'] = df['reporting_start'].dt.date
-    pivot = df.pivot(index='___', columns='___', values='___').fillna(0)
+    pivot = df.pivot(index='reporting_start', columns='age', values='total_conversion').fillna(0)
     pivot.plot.bar(ax=plt.gca())
 
   fig.suptitle('Campaign Conversion per Age Group', fontsize=20)
@@ -148,7 +148,7 @@ def create_plot(file_path="data_input/data.csv", id=['936', '1178']):
   return(imagename)
 
 def main(subject, \
-  contact_file='___', \
+  contact_file='templates/contacts.txt', \
   template_file='templates/body.txt', \
   data_file='data_input/data.csv'):
   """   
@@ -164,7 +164,7 @@ def main(subject, \
   template = create_template(template_file)
   data_dict = extract_summary(data_file)
 
-  # // TODO: CHALLENGE 3
+  # // TODO: CHALLENGE 3 
   # // Log in into Outlook email account
   # // Please use environment variable for security purposes
   s = authenticate_account(EMAIL=os.environ['EMAIL_ADDRESS'], \
